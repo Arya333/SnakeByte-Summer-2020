@@ -12,6 +12,7 @@ public class Drivetrain{
     LinearOpMode opMode;
     public double countsPerInch;
     ElapsedTime time;
+    Sensors sensor;
     // This is a test comment.
     // Test Comment 2
 
@@ -27,6 +28,7 @@ public class Drivetrain{
         countsPerInch = EncodersPerInch(560, 0.5, (100/25.4));
 
         time = new ElapsedTime();
+        sensor = new Sensors(opMode);
     }
 
     public void startMotors(double left, double right){
@@ -34,6 +36,13 @@ public class Drivetrain{
         motorFR.setPower(right);
         motorBL.setPower(left);
         motorBR.setPower(right);
+    }
+
+    public void stopMotors(){
+        motorFL.setPower(0);
+        motorFR.setPower(0);
+        motorBL.setPower(0);
+        motorBR.setPower(0);
     }
 
     public double EncodersPerInch(double encoders, double gearReduction, double wheelDiameter){
@@ -94,4 +103,66 @@ public class Drivetrain{
             startMotors(power, power);
         }
     }
+
+    public void moveGyro(double power, double inches, double heading){
+        resetEncoders();
+        double constant = .6; //to reduce power of one side of drivetrain
+        if (power > 0){
+            while (getEncoderAvg() < inches * countsPerInch && opMode.opModeIsActive()){ //while our avg encoder value is less than desired number of encoder ticks
+                if (sensor.getTrueDiff(heading) > 1){ //if our robot is off its heading to the left (needs to turn right)
+                    startMotors(power, power * constant); //apply less power to right side so we turn right to maintain our heading
+                }
+                else if (sensor.getTrueDiff(heading) < -1){ //if our robot is off its heading to the right (needs to turn left)
+                    startMotors(power * constant, power); //apply less power to left side so we turn left to maintain our heading
+                }
+                else{
+                    startMotors(power, power);
+                }
+            }
+        }
+        else{
+            while (getEncoderAvg() < inches * countsPerInch && opMode.opModeIsActive()){ //everything is swapped when we move backwards
+                if (sensor.getTrueDiff(heading) > 1){
+                    startMotors(power * constant, power);
+                }
+                else if (sensor.getTrueDiff(heading) < -1){
+                    startMotors(power, power * constant);
+                }
+                else{
+                    startMotors(power, power);
+                }
+            }
+        }
+    }
+
+    public void turnPI(double angle, double p, double i, double timeout){
+        time.reset();
+        double kP = p / 90;
+        double kI = i / 100000;
+        double currTime = time.milliseconds();
+        double pastTime = 0;
+        double P = 0;
+        double I = 0;
+        double angleDiff = sensor.getTrueDiff(angle);
+        double changePID = 0;
+        while (Math.abs(angleDiff) < 1 && time.seconds() < timeout){
+            pastTime = currTime;
+            currTime = time.milliseconds();
+            double dT = currTime - pastTime;
+            angleDiff = sensor.getTrueDiff(angle);
+            P = angleDiff * kP;
+            I = angleDiff * dT * kI;
+            changePID = P;
+            changePID += I;
+            if (changePID < 0){
+                startMotors(changePID - .10, -changePID + .10);
+            }
+            else{
+                startMotors(changePID + .10, -changePID - .10);
+            }
+        }
+        stopMotors();
+    }
+
+    
 }
