@@ -18,5 +18,9 @@ public class Auto1 extends LinearOpMode {
         drivetrain.moveInches(10, .5);
         sleep(1000);
         drivetrain.moveTime(3000, .6);
+        sleep(1000);
+        drivetrain.turnPI(90,.5,.5,3);
+        sleep(1000);
+        drivetrain.moveGyro(.6,20,90);
     }
 }

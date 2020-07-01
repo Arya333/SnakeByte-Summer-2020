@@ -145,13 +145,13 @@ public class Drivetrain{
         double I = 0;
         double angleDiff = sensor.getTrueDiff(angle);
         double changePID = 0;
-        while (Math.abs(angleDiff) < 1 && time.seconds() < timeout){
+        while (Math.abs(angleDiff) > 1 && time.seconds() < timeout){
             pastTime = currTime;
             currTime = time.milliseconds();
             double dT = currTime - pastTime;
             angleDiff = sensor.getTrueDiff(angle);
             P = angleDiff * kP;
-            I = angleDiff * dT * kI;
+            I += angleDiff * dT * kI;
             changePID = P;
             changePID += I;
             if (changePID < 0){
@@ -164,5 +164,5 @@ public class Drivetrain{
         stopMotors();
     }
 
-    
+
 }
