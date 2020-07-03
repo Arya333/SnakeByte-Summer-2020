@@ -43,4 +43,46 @@ public class Arm
         shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         opMode.idle();
     }
+
+    public int getEncoderWrist()
+    {
+        return Math.abs(wristMotor.getCurrentPosition());
+    }
+
+    public int getEncoderElbow()
+    {
+        return Math.abs(elbowMotor.getCurrentPosition());
+    }
+
+    public int getEncoderShoulder()
+    {
+        return Math.abs(shoulderMotor.getCurrentPosition());
+    }
+
+    void moveWrist(double power, double encoder)
+    {
+        resetEncoders();
+        while (getEncoderWrist() < encoder) {
+            wristMotor.setPower(power);
+        }
+        wristMotor.setPower(0);
+    }
+
+    void moveElbow(double power, double encoder)
+    {
+        resetEncoders();
+        while (getEncoderElbow() < encoder) {
+            elbowMotor.setPower(power);
+        }
+        elbowMotor.setPower(0);
+    }
+
+    void moveShoulder(double power, double encoder)
+    {
+        resetEncoders();
+        while (getEncoderShoulder() < encoder) {
+            shoulderMotor.setPower(power);
+        }
+        shoulderMotor.setPower(0);
+    }
 }

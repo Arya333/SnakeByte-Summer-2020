@@ -21,6 +21,11 @@ public class SnakeByteTeleOp extends SnakeByteOpMode {
             sC = 1;
         }
 
+        if (Math.abs(gamepad2.left_stick_y) > .1 || Math.abs(gamepad2.right_stick_y) > .1) {
+            shoulderMotor.setPower(gamepad2.left_stick_y);
+            elbowMotor.setPower(gamepad2.right_stick_y);
+        }
+
         //tank drive controls (Y value of left stick is for left side of drivetrain & vice versa)
         if (tank) {
             if (Math.abs(gamepad1.left_stick_y) > .1 || (Math.abs(gamepad1.right_stick_y)) > .1) {
