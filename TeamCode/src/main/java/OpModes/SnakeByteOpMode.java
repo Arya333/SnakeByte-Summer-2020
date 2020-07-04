@@ -27,7 +27,7 @@ public abstract class SnakeByteOpMode extends OpMode {
 
         motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);   
         motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
